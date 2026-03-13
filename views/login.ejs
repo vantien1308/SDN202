@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="premium-container">
+                <h2 class="text-center fw-bold mb-4">🔑 Sign In</h2>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email Address</label>
+                        <input type="email" class="form-control" name="email" id="loginEmail"
+                            placeholder="admin@example.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Password</label>
+                        <input type="password" class="form-control" name="password" id="loginPassword"
+                            placeholder="••••••••" required>
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">Login to Portal</button>
+                    </div>
+                    <div id="loginStatus" class="text-center"></div>
+                </form>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Don't have an account? Contact the admin.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const res = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    // Store token in localStorage
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+
+                    document.getElementById('loginStatus').innerHTML = '<span class="text-success">Login successful! Redirecting...</span>';
+                    setTimeout(() => window.location.href = '/', 1000);
+                } else {
+                    document.getElementById('loginStatus').innerHTML = `<span class="text-danger">${result.message}</span>`;
+                }
+            } catch (err) {
+                document.getElementById('loginStatus').innerHTML = '<span class="text-danger">Unexpected Error connecting to server</span>';
+            }
+        });
+    </script>
+
+    <%- include('partials/footer') %>
