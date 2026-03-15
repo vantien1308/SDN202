@@ -27,7 +27,7 @@
                             <th>Date Range</th>
                             <th>Total Amt</th>
                             <th>Late/Fee</th>
-                            <th>Action</th>
+                            <th class="admin-only">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,7 +53,7 @@
                                         <%= b.lateDays %> days (Fee: $<%= b.lateFee %>)
                                     </small>
                                 </td>
-                                <td>
+                                <td class="admin-only">
                                     <!-- Example actions -->
 
                                     <button class="btn btn-sm btn-outline-danger"

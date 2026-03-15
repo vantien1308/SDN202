@@ -56,13 +56,28 @@
                 const result = await res.json();
 
                 if (res.ok) {
-                    document.getElementById('regStatus').innerHTML = '<span class="text-success">Registration successful! Please login...</span>';
-                    setTimeout(() => window.location.href = '/login', 1500);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Registration successful! Please login...',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/login';
+                    });
                 } else {
-                    document.getElementById('regStatus').innerHTML = `<span class="text-danger">${result.message}</span>`;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Registration Failed',
+                        text: result.message
+                    });
                 }
             } catch (err) {
-                document.getElementById('regStatus').innerHTML = '<span class="text-danger">Unexpected connection error</span>';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unexpected connection error'
+                });
             }
         });
     </script>

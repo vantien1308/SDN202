@@ -103,6 +103,11 @@
             padding: 0.4em 0.8em;
             border-radius: 20px;
         }
+
+        /* Role-based Visibility */
+        body:not(.role-admin) .admin-only {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -139,6 +144,12 @@
             const authArea = document.getElementById('navAuthArea');
 
             if (token && user.username) {
+                if (user.role === 'admin') {
+                    document.body.classList.add('role-admin');
+                } else {
+                    document.body.classList.add('role-user');
+                }
+                
                 authArea.innerHTML = `
               <div class="dropdown">
                 <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">

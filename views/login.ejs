@@ -46,13 +46,28 @@
                     localStorage.setItem('token', result.token);
                     localStorage.setItem('user', JSON.stringify(result.user));
 
-                    document.getElementById('loginStatus').innerHTML = '<span class="text-success">Login successful! Redirecting...</span>';
-                    setTimeout(() => window.location.href = '/', 1000);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Welcome Back!',
+                        text: 'Login successful! Redirecting...',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
                 } else {
-                    document.getElementById('loginStatus').innerHTML = `<span class="text-danger">${result.message}</span>`;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: result.message
+                    });
                 }
             } catch (err) {
-                document.getElementById('loginStatus').innerHTML = '<span class="text-danger">Unexpected Error connecting to server</span>';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unexpected Error connecting to server'
+                });
             }
         });
     </script>
