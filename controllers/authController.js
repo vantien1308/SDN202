@@ -40,3 +40,32 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.googleCallback = (req, res) => {
+    const user = req.user;
+    if (!user) return res.redirect('/login');
+
+    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "1d" });
+    
+    // Inject token into returning client's localStorage
+    res.send(`
+        <html>
+            <body>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    localStorage.setItem('token', '${token}');
+                    localStorage.setItem('user', JSON.stringify({ username: '${user.username}', role: '${user.role}' }));
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Google Login',
+                        text: 'Logged in successfully!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                </script>
+            </body>
+        </html>
+    `);
+};
