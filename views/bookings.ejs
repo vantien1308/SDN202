@@ -148,6 +148,7 @@
                 const result = await res.json();
                 if (res.ok) {
                     showNotification('Booking scheduled successfully!');
+                    setTimeout(() => location.reload(), 1500);
                 } else if (res.status === 401 || res.status === 403) {
                     showNotification('Unauthorized! Please login.', false);
                     setTimeout(() => window.location.href = '/login', 2000);
