@@ -24,6 +24,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("public"));
 
 // 🔥 VIEW CONFIGURATION
 app.set("view engine", "ejs");
