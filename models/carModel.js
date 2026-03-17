@@ -27,6 +27,10 @@ const CarSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  imageUrl: {
+    type: String,
+    default: "",
+  },
 });
 
 // 🚨 DÒNG QUAN TRỌNG NHẤT

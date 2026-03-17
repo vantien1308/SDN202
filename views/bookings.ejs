@@ -114,10 +114,27 @@
     </div>
 
     <script>
+        // Prevent selecting past dates
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementsByName('startDate')[0];
+        const endDateInput = document.getElementsByName('endDate')[0];
+        
+        startDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('min', today);
+
+        startDateInput.addEventListener('change', () => {
+            endDateInput.setAttribute('min', startDateInput.value);
+        });
+
         document.getElementById('addBookingForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
+
+            if (new Date(data.startDate) > new Date(data.endDate)) {
+                showNotification('End date cannot be before start date!', false);
+                return;
+            }
 
             try {
                 const res = await fetch('/bookings', {

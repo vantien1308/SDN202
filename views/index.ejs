@@ -22,6 +22,7 @@
         <table class="table table-hover align-middle">
           <thead>
             <tr>
+              <th>Image</th>
               <th>Plate Number</th>
               <th>Capacity</th>
               <th>Price / Day</th>
@@ -33,6 +34,13 @@
           <tbody>
             <% cars.forEach(car=> { %>
               <tr>
+                <td>
+                  <% if (car.imageUrl) { %>
+                    <img src="<%= car.imageUrl %>" alt="Car Image" style="width: 80px; height: 50px; object-fit: cover; border-radius: 8px;">
+                  <% } else { %>
+                    <div style="width: 80px; height: 50px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa;">No Image</div>
+                  <% } %>
+                </td>
                 <td class="fw-bold">
                   <%= car.carNumber %>
                 </td>
@@ -56,7 +64,7 @@
                         <% } %>
                 </td>
                 <td class="admin-only">
-                  <button class="btn btn-sm btn-outline-primary" onclick="editCar('<%= car._id %>', '<%= car.carNumber %>', '<%= car.capacity %>', '<%= car.pricePerDay %>', '<%= car.features.join(',') %>', '<%= car.status %>')">Edit</button>
+                  <button class="btn btn-sm btn-outline-primary" onclick="editCar('<%= car._id %>', '<%= car.carNumber %>', '<%= car.capacity %>', '<%= car.pricePerDay %>', '<%= car.features.join(',') %>', '<%= car.status %>', '<%= car.imageUrl %>')">Edit</button>
                   <button class="btn btn-sm btn-outline-danger" onclick="deleteCar('<%= car._id %>')">Delete</button>
                 </td>
               </tr>
@@ -96,6 +104,10 @@
             <div class="mb-3">
               <label class="form-label fw-bold">Features (comma separated)</label>
               <input type="text" class="form-control" name="features" placeholder="GPS, Sunroof, Leather Seats">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Image URL</label>
+              <input type="text" class="form-control" name="imageUrl" placeholder="https://example.com/car.jpg">
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Status</label>
@@ -144,6 +156,10 @@
             <div class="mb-3">
               <label class="form-label fw-bold">Features (comma separated)</label>
               <input type="text" class="form-control" name="features" id="editFeatures" placeholder="GPS, Sunroof, Leather Seats">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Image URL</label>
+              <input type="text" class="form-control" name="imageUrl" id="editImageUrl" placeholder="https://example.com/car.jpg">
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Status</label>
@@ -201,13 +217,14 @@
 
     const editModal = new bootstrap.Modal(document.getElementById('editCarModal'));
 
-    function editCar(id, carNumber, capacity, pricePerDay, features, status) {
+    function editCar(id, carNumber, capacity, pricePerDay, features, status, imageUrl) {
       document.getElementById('editCarId').value = id;
       document.getElementById('editCarNumber').value = carNumber;
       document.getElementById('editCapacity').value = capacity;
       document.getElementById('editPricePerDay').value = pricePerDay;
       document.getElementById('editFeatures').value = features;
       document.getElementById('editStatus').value = status;
+      document.getElementById('editImageUrl').value = imageUrl || '';
       editModal.show();
     }
 
