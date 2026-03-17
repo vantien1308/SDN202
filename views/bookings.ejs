@@ -114,78 +114,83 @@
     </div>
 
     <script>
-        // Prevent selecting past dates
-        const today = new Date().toISOString().split('T')[0];
-        const startDateInput = document.getElementsByName('startDate')[0];
-        const endDateInput = document.getElementsByName('endDate')[0];
-        
-        startDateInput.setAttribute('min', today);
-        endDateInput.setAttribute('min', today);
+        window.addEventListener('DOMContentLoaded', () => {
+            // Prevent selecting past dates
+            const today = new Date().toISOString().split('T')[0];
+            const startDateInput = document.getElementsByName('startDate')[0];
+            const endDateInput = document.getElementsByName('endDate')[0];
+            
+            if (startDateInput && endDateInput) {
+                startDateInput.setAttribute('min', today);
+                endDateInput.setAttribute('min', today);
 
-        startDateInput.addEventListener('change', () => {
-            endDateInput.setAttribute('min', startDateInput.value);
-        });
-
-        document.getElementById('addBookingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-
-            if (new Date(data.startDate) > new Date(data.endDate)) {
-                showNotification('End date cannot be before start date!', false);
-                return;
-            }
-
-            try {
-                const res = await fetch('/bookings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify(data)
+                startDateInput.addEventListener('change', () => {
+                    endDateInput.setAttribute('min', startDateInput.value);
                 });
-                const result = await res.json();
-                if (res.ok) {
-                    showNotification('Booking scheduled successfully!');
-                    setTimeout(() => location.reload(), 1500);
-                } else if (res.status === 401 || res.status === 403) {
-                    showNotification('Unauthorized! Please login.', false);
-                    setTimeout(() => window.location.href = '/login', 2000);
-                } else {
-                    showNotification('Error scheduling booking: ' + result.message, false);
-                }
-            } catch (err) {
-                console.error(err);
-                showNotification('Network Error', false);
             }
-        });
 
-        async function deleteBooking(id) {
-            if (!confirm('Are you sure you want to delete this booking?')) return;
+            const addBookingForm = document.getElementById('addBookingForm');
+            if (addBookingForm) {
+                addBookingForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const data = Object.fromEntries(formData);
 
-            try {
-                const res = await fetch(`/bookings/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    if (new Date(data.startDate) > new Date(data.endDate)) {
+                        showNotification('End date cannot be before start date!', false);
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch('/bookings', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        const result = await res.json();
+                        if (res.ok) {
+                            showNotification('Booking scheduled successfully!');
+                        } else if (res.status === 401 || res.status === 403) {
+                            showNotification('Unauthorized! Please login.', false);
+                            setTimeout(() => window.location.href = '/login', 2500);
+                        } else {
+                            showNotification('Error scheduling booking: ' + result.message, false);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showNotification('Network Error', false);
                     }
                 });
-                const result = await res.json();
-                if (res.ok) {
-                    showNotification('Booking deleted successfully!');
-                    location.reload();
-                } else if (res.status === 401 || res.status === 403) {
-                    showNotification('Unauthorized! Admins only.', false);
-                    setTimeout(() => window.location.href = '/login', 2000);
-                } else {
-                    showNotification('Error: ' + result.message, false);
-                }
-            } catch (err) {
-                console.error(err);
-                showNotification('Network Error', false);
             }
-        }
+
+            window.deleteBooking = async function(id) {
+                if (!confirm('Are you sure you want to delete this booking?')) return;
+
+                try {
+                    const res = await fetch(`/bookings/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    const result = await res.json();
+                    if (res.ok) {
+                        showNotification('Booking deleted successfully!');
+                    } else if (res.status === 401 || res.status === 403) {
+                        showNotification('Unauthorized! Admins only.', false);
+                        setTimeout(() => window.location.href = '/login', 2500);
+                    } else {
+                        showNotification('Error: ' + result.message, false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showNotification('Network Error', false);
+                }
+            }
+        });
     </script>
 
     <%- include('partials/footer') %>
